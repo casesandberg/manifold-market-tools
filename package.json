@@ -1,5 +1,8 @@
 {
   "name": "manifold-market-tools",
+  "workspaces": [
+    "apps/*"
+  ],
   "devDependencies": {
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.9"
