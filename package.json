@@ -4,7 +4,16 @@
     "apps/*"
   ],
   "devDependencies": {
+    "@types/react-highlight-words": "^0.16.7",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.9"
+  },
+  "dependencies": {
+    "@algolia/autocomplete-core": "^1.13.0",
+    "@headlessui/react": "^1.7.17",
+    "clsx": "^2.0.0",
+    "framer-motion": "^10.16.16",
+    "react-highlight-words": "^0.20.0",
+    "zustand": "^4.4.7"
   }
 }
