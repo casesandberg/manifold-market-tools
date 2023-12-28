@@ -12,8 +12,11 @@
     "@algolia/autocomplete-core": "^1.13.0",
     "@headlessui/react": "^1.7.17",
     "clsx": "^2.0.0",
+    "dexie": "^3.2.4",
+    "dexie-react-hooks": "^1.1.7",
     "framer-motion": "^10.16.16",
     "react-highlight-words": "^0.20.0",
+    "react-use": "^17.4.2",
     "zustand": "^4.4.7"
   }
 }
