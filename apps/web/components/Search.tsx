@@ -11,8 +11,9 @@ import {
 } from '@algolia/autocomplete-core'
 import { Dialog, Transition } from '@headlessui/react'
 import clsx from 'clsx'
+import { db, Market } from '@/lib/db'
 
-type Result = {}
+type Result = Market
 
 type EmptyObject = Record<string, never>
 
@@ -49,33 +50,22 @@ function useAutocomplete({ close }: { close: () => void }) {
       navigator: {
         navigate,
       },
-      getSources({ query }) {
-        return {
-          sourceId: 'documentation',
-          getItems() {
-            return []
-            // return search(query, { limit: 5 })
+      async getSources({ query }) {
+        return [
+          {
+            sourceId: 'markets',
+            getItems() {
+              return db.markets
+                .filter((market) => market.market_title.includes(query))
+                .limit(5)
+                .toArray()
+            },
+            getItemUrl({ item }) {
+              return item.url
+            },
+            onSelect: navigate,
           },
-          getItemUrl({ item }) {
-            return item.url
-          },
-          onSelect: navigate,
-        }
-
-        // return import('@/mdx/search.mjs').then(({ search }) => {
-        //   return [
-        //     {
-        //       sourceId: 'documentation',
-        //       getItems() {
-        //         return search(query, { limit: 5 })
-        //       },
-        //       getItemUrl({ item }) {
-        //         return item.url
-        //       },
-        //       onSelect: navigate,
-        //     },
-        //   ]
-        // })
+        ]
       },
     }),
   )
@@ -150,9 +140,6 @@ function SearchResult({
 }) {
   let id = useId()
 
-  let sectionTitle = 'Test' // navigation.find((section) => section.links.find((link) => link.href === result.url.split('#')[0]))?.title
-  let hierarchy = [sectionTitle, result.pageTitle].filter((x): x is string => typeof x === 'string')
-
   return (
     <li
       className={clsx(
@@ -170,22 +157,8 @@ function SearchResult({
         aria-hidden="true"
         className="text-sm font-medium text-zinc-900 group-aria-selected:text-emerald-500"
       >
-        <HighlightQuery text={result.title} query={query} />
+        <HighlightQuery text={result.market_title} query={query} />
       </div>
-      {hierarchy.length > 0 && (
-        <div
-          id={`${id}-hierarchy`}
-          aria-hidden="true"
-          className="text-2xs mt-1 truncate whitespace-nowrap text-zinc-500"
-        >
-          {hierarchy.map((item, itemIndex, items) => (
-            <Fragment key={itemIndex}>
-              <HighlightQuery text={item} query={query} />
-              <span className={itemIndex === items.length - 1 ? 'sr-only' : 'mx-2 text-zinc-300'}>/</span>
-            </Fragment>
-          ))}
-        </div>
-      )}
     </li>
   )
 }
