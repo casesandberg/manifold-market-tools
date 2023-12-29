@@ -149,7 +149,6 @@ export function MarketsTable() {
       name: 'State',
       options: [
         { value: 'unresolved', label: 'Unresolved', checked: true },
-        { value: 'unclaimed', label: 'Unclaimed', checked: true },
         { value: 'creator-afk', label: 'Creator AFK', checked: false },
         { value: 'creator-deleted', label: 'Creator Deleted', checked: false },
       ],
@@ -170,7 +169,6 @@ export function MarketsTable() {
   const activeFilters = [
     { value: 'closes-soon', label: 'Closes in 2023' },
     { value: 'unresolved', label: 'Unresolved' },
-    { value: 'unclaimed', label: 'Unclaimed' },
   ]
 
   return (
