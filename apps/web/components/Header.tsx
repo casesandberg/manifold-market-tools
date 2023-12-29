@@ -29,29 +29,25 @@ function TopLevelNavItem({ href, children }: { href: string; children: React.Rea
 
 export const Header = forwardRef<React.ElementRef<'div'>, { className?: string }>(function Header({ className }, ref) {
   return (
-    <motion.div
-      ref={ref}
-      className={clsx(
-        className,
-        'fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between gap-12 bg-white px-4 transition sm:px-6',
-      )}
-    >
-      <div className="flex items-center gap-5">
-        <Link href="/" aria-label="Home">
-          <Logo className="h-6" />
-        </Link>
+    <motion.div ref={ref} className={clsx(className, 'fixed inset-x-0 top-0 z-50 bg-white transition')}>
+      <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between gap-12 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-5">
+          <Link href="/" aria-label="Home">
+            <Logo className="h-6" />
+          </Link>
 
-        <nav>
-          <ul role="list" className="flex items-center gap-8">
-            <TopLevelNavItem href="/">Dashboard</TopLevelNavItem>
-            <TopLevelNavItem href="/markets">Markets</TopLevelNavItem>
-          </ul>
-        </nav>
-      </div>
+          <nav>
+            <ul role="list" className="flex items-center gap-8">
+              <TopLevelNavItem href="/">Dashboard</TopLevelNavItem>
+              <TopLevelNavItem href="/markets">Markets</TopLevelNavItem>
+            </ul>
+          </nav>
+        </div>
 
-      <div>
-        <Search />
-        <MobileSearch />
+        <div>
+          <Search />
+          <MobileSearch />
+        </div>
       </div>
     </motion.div>
   )

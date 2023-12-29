@@ -9,7 +9,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <motion.header layoutScroll className="contents">
         <Header />
       </motion.header>
-      <div className="relative flex h-full flex-col px-4 pt-14 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex h-full max-w-screen-2xl flex-col px-4 pt-14 sm:px-6 lg:px-8">
         <main className="flex-auto">{children}</main>
         {/* <Footer /> */}
       </div>
