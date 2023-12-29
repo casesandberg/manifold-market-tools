@@ -19,6 +19,7 @@ export type Market = {
   creator_avatar_url: string
   creator_profile_url: string
   creator_last_bet_time: string
+  creator_deleted: boolean
 
   resolution: 'YES' | 'NO' | 'MKT' | null
   resolved_at: string | null

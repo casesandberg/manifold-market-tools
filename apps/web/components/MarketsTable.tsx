@@ -69,6 +69,17 @@ export function MarketsTable() {
       {
         accessorKey: 'creator_username',
         header: () => <span>Creator</span>,
+        cell: ({ row }) => {
+          return (
+            <a
+              href={row.original.creator_profile_url}
+              target="_blank"
+              className={clsx('hover:underline', row.original.creator_deleted && 'line-through')}
+            >
+              <span>{row.original.creator_username}</span>
+            </a>
+          )
+        },
         size: 150,
       },
       {
@@ -98,18 +109,18 @@ export function MarketsTable() {
         size: 80,
         cell: (info) => moment(info.getValue<string>()).format('MMM D'),
       },
-      {
-        id: 'claim',
-        header: () => <span></span>,
-        size: 50,
-        cell: ({ row }) => {
-          return (
-            <a href={row.original.url} target="_blank">
-              <span className="hover:underline">Claim</span>
-            </a>
-          )
-        },
-      },
+      // {
+      //   id: 'claim',
+      //   header: () => <span></span>,
+      //   size: 50,
+      //   cell: ({ row }) => {
+      //     return (
+      //       <a href={row.original.url} target="_blank">
+      //         <span className="hover:underline">Claim</span>
+      //       </a>
+      //     )
+      //   },
+      // },
     ],
     [],
   )
@@ -140,6 +151,7 @@ export function MarketsTable() {
         { value: 'unresolved', label: 'Unresolved', checked: true },
         { value: 'unclaimed', label: 'Unclaimed', checked: true },
         { value: 'creator-afk', label: 'Creator AFK', checked: false },
+        { value: 'creator-deleted', label: 'Creator Deleted', checked: false },
       ],
     },
     {
