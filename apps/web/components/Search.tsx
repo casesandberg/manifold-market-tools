@@ -2,7 +2,7 @@
 
 import { forwardRef, Fragment, Suspense, useCallback, useEffect, useId, useRef, useState } from 'react'
 import Highlighter from 'react-highlight-words'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import {
   type AutocompleteApi,
   createAutocomplete,
@@ -21,7 +21,7 @@ type Autocomplete = AutocompleteApi<Result, React.SyntheticEvent, React.MouseEve
 
 function useAutocomplete({ close }: { close: () => void }) {
   let id = useId()
-  let router = useRouter()
+  // let router = useRouter()
   let [autocompleteState, setAutocompleteState] = useState<AutocompleteState<Result> | EmptyObject>({})
 
   function navigate({ itemUrl }: { itemUrl?: string }) {
@@ -29,7 +29,8 @@ function useAutocomplete({ close }: { close: () => void }) {
       return
     }
 
-    router.push(itemUrl)
+    // router.push(itemUrl)
+    window.open(itemUrl, '_blank')
 
     if (itemUrl === window.location.pathname + window.location.search + window.location.hash) {
       close()
@@ -48,7 +49,7 @@ function useAutocomplete({ close }: { close: () => void }) {
         return state.query !== ''
       },
       navigator: {
-        navigate,
+        navigate: () => {},
       },
       async getSources({ query }) {
         return [
@@ -311,7 +312,7 @@ function SearchDialog({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="ring-zinc-900/7.5 mx-auto transform-gpu overflow-hidden rounded-lg bg-zinc-50 shadow-xl ring-1 sm:max-w-xl">
+            <Dialog.Panel className="mx-auto transform-gpu overflow-hidden rounded-lg bg-zinc-50 shadow-xl ring-1 ring-zinc-900/10 sm:max-w-xl">
               <div {...autocomplete.getRootProps({})}>
                 <form
                   ref={formRef}
