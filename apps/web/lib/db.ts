@@ -5,7 +5,7 @@ import Dexie, { Table } from 'dexie'
 export type Market = {
   market_id: string
   market_title: string
-  market_type: 'BINARY' | 'MULTIPLE_CHOICE'
+  market_type: 'BINARY' | 'MULTIPLE_CHOICE' | 'FREE_RESPONSE' | 'POLL' | 'PSEUDO_NUMERIC' | 'STONK'
   url: string
   close_time: string
   probability: number // 0.0721244968092122,

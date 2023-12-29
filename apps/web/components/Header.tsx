@@ -1,3 +1,5 @@
+'use client'
+
 import { forwardRef } from 'react'
 import Link from 'next/link'
 import clsx from 'clsx'
@@ -5,11 +7,20 @@ import { motion } from 'framer-motion'
 
 import { Logo } from '@/components/Logo'
 import { MobileSearch, Search } from '@/components/Search'
+import { usePathname } from 'next/navigation'
 
 function TopLevelNavItem({ href, children }: { href: string; children: React.ReactNode }) {
+  const pathname = usePathname()
+
   return (
     <li>
-      <Link href={href} className="text-sm leading-5 text-zinc-600 transition hover:text-zinc-900">
+      <Link
+        href={href}
+        className={clsx(
+          'text-sm leading-5 text-zinc-600 transition hover:text-zinc-900',
+          pathname === href && 'font-semibold text-zinc-900',
+        )}
+      >
         {children}
       </Link>
     </li>
@@ -33,7 +44,7 @@ export const Header = forwardRef<React.ElementRef<'div'>, { className?: string }
         <nav>
           <ul role="list" className="flex items-center gap-8">
             <TopLevelNavItem href="/">Dashboard</TopLevelNavItem>
-            <TopLevelNavItem href="#">Markets</TopLevelNavItem>
+            <TopLevelNavItem href="/markets">Markets</TopLevelNavItem>
           </ul>
         </nav>
       </div>
