@@ -25,8 +25,15 @@ export function MarketsDotGrid() {
             data-tooltip-id="tooltip"
             data-title={market.market_title}
             data-username={market.creator_username}
+            data-status={
+              isResolvedMarket(market)
+                ? `<span class="text-emerald-400 text-xs font-semibold">Resolved</span>`
+                : moment(market.close_time).isBefore()
+                  ? `<span class="text-gray-600 text-xs font-semibold">Closed</span>`
+                  : `<span class="text-gray-400 text-xs font-semibold">Closing Soon</span>`
+            }
+            data-tooltip-class-name="!opacity-100 !w-[240px] !rounded-none !bg-white !px-4 !py-3 !text-sm !text-gray-500 !shadow-md"
             data-tooltip-place="bottom"
-            data-tooltip-variant="light"
             key={market.market_id + color}
             initial={{ scale: 0.1, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -39,10 +46,11 @@ export function MarketsDotGrid() {
         id="tooltip"
         className="rounded-none"
         render={({ activeAnchor }) => (
-          <div className="m-0 w-[240px] rounded-none bg-white px-1 py-2 text-sm text-gray-500">
+          <>
+            <div dangerouslySetInnerHTML={{ __html: activeAnchor?.getAttribute('data-status') ?? '' }}></div>
             <div className="font-semibold text-gray-900">{activeAnchor?.getAttribute('data-title')}</div>
             <div>@{activeAnchor?.getAttribute('data-username')}</div>
-          </div>
+          </>
         )}
       />
     </div>
