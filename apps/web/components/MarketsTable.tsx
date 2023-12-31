@@ -1,6 +1,6 @@
 'use client'
 
-import { Market, db } from '@/lib/db'
+import { Market, db, isResolvedMarket } from '@/lib/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { Fragment, useMemo, useRef, useState } from 'react'
@@ -19,7 +19,12 @@ import moment from 'moment'
 import { Popover, Transition } from '@headlessui/react'
 
 export function MarketsTable() {
-  const markets = useLiveQuery(() => db.markets.toArray()) ?? []
+  const markets = useLiveQuery(() => db.markets.toArray()) ?? [] // eslint-disable-line react-hooks/exhaustive-deps
+  const filteredMarkets = useMemo(() => {
+    return markets.filter((market) => {
+      return !isResolvedMarket(market)
+    })
+  }, [markets])
 
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -126,7 +131,7 @@ export function MarketsTable() {
   )
 
   const table = useReactTable({
-    data: markets,
+    data: filteredMarkets,
     columns,
     state: {
       sorting,
@@ -178,18 +183,18 @@ export function MarketsTable() {
           <div className="mx-auto flex items-center justify-between px-3">
             <h3 className="text-lg font-semibold">Markets</h3>
 
-            <div className="hidden sm:block">
+            {/* <div className="hidden sm:block">
               <div className="flow-root">
                 <Popover.Group className="-mx-4 flex items-center divide-x divide-gray-200">
                   {filters.map((section, sectionIdx) => (
                     <Popover key={section.name} className="relative inline-block px-4 text-left">
                       <Popover.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
                         <span>{section.name}</span>
-                        {/* {sectionIdx === 0 ? (
+                        {sectionIdx === 0 ? (
                           <span className="ml-1.5 rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-gray-700">
                             1
                           </span>
-                        ) : null} */}
+                        ) : null}
                         <ChevronDownIcon
                           className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                           aria-hidden="true"
@@ -232,7 +237,7 @@ export function MarketsTable() {
                   ))}
                 </Popover.Group>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -245,7 +250,7 @@ export function MarketsTable() {
                   className="m-1 inline-flex items-center rounded-full border border-gray-200 bg-white py-1.5 pl-3 pr-2 text-sm font-medium text-gray-900"
                 >
                   <span>{activeFilter.label}</span>
-                  <button
+                  {/* <button
                     type="button"
                     className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
                   >
@@ -253,7 +258,7 @@ export function MarketsTable() {
                     <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
                       <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
                     </svg>
-                  </button>
+                  </button> */}
                 </span>
               ))}
             </div>
