@@ -281,6 +281,10 @@ const MarketCumSumChart = ({ width, height, margin = { top: 0, right: 0, bottom:
           <div>
             Resolved: <strong className="text-emerald-500">{tooltipData.cumulativeResolved}</strong>
           </div>
+          <div>
+            Percent:{' '}
+            <strong>{Math.round((tooltipData.cumulativeResolved / tooltipData.cumulativeClosed) * 100)}%</strong>
+          </div>
         </Tooltip>
       )}
     </div>
