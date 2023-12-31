@@ -1,6 +1,7 @@
 import { Leaderboard } from '@/components/Leaderboard'
 import { MarketsDotGrid } from '@/components/MarketsDotGrid'
 import { RecentlyResolvedList } from '@/components/RecentlyResolvedList'
+import { ResolvedMarketsGraph } from '@/components/ResolvedMarketsGraph'
 
 const getStats = async () => {
   'use server'
@@ -45,8 +46,10 @@ export default async function Home() {
         <div className="flex-1 lg:order-3"></div>
       </div>
       <div className="mt-8 flex gap-12">
-        <div className="flex-[3] lg:order-2">
-          <div className="mb-8 h-[250px] w-full bg-gray-200"></div>
+        <div className="flex min-w-0 flex-[3] flex-col gap-8 lg:order-2">
+          <div className="h-[250px]">
+            <ResolvedMarketsGraph />
+          </div>
           <MarketsDotGrid />
         </div>
         <div className="flex-1 lg:order-1">
