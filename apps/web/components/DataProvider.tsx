@@ -12,7 +12,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [value, setValue] = useLocalStorage<Date>('MARKETS_LAST_FETCH')
 
   useEffect(() => {
-    let socket = new Socket('ws://nyr.fly.dev/socket', { params: {} })
+    let socket = new Socket('wss://nyr.fly.dev/socket', { params: {} })
     socket.connect()
 
     let channel = socket.channel('updates:markets', {})
