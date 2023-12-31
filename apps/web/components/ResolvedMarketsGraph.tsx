@@ -260,7 +260,7 @@ const MarketCumSumChart = ({ width, height, margin = { top: 0, right: 0, bottom:
         <Tooltip
           top={innerHeight + margin.top}
           left={tooltipLeft}
-          className="absolute w-[140px] -translate-x-1/2 bg-white px-4 py-3 text-sm text-gray-500 shadow-md"
+          className="absolute z-10 w-[140px] -translate-x-1/2 bg-white px-4 py-3 text-sm text-gray-500 shadow-md"
           style={{}}
         >
           <div className="font-semibold text-gray-900">{moment(tooltipData.hour).format('MMM D - hA')}</div>
