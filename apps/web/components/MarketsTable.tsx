@@ -3,10 +3,9 @@
 import { Market, db, isResolvedMarket } from '@/lib/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
-import { Fragment, useMemo, useRef, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import {
   ColumnDef,
-  Row,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -17,14 +16,115 @@ import {
 import clsx from 'clsx'
 import moment from 'moment'
 import { Popover, Transition } from '@headlessui/react'
+import _ from 'lodash'
 
 export function MarketsTable() {
   const markets = useLiveQuery(() => db.markets.toArray()) ?? [] // eslint-disable-line react-hooks/exhaustive-deps
-  const filteredMarkets = useMemo(() => {
-    return markets.filter((market) => {
-      return !isResolvedMarket(market)
-    })
+  const [activeFilters, setActiveFilters] = useState<Array<{ value: string; label: string }>>([
+    { value: 'closes-soon', label: 'Closes in 2023' },
+    { value: 'unresolved', label: 'Unresolved' },
+  ])
+
+  const handleToggleActiveFilters = (filter: { value: string; label: string }) => {
+    if (activeFilters.find(({ value }) => value === filter.value)) {
+      setActiveFilters(activeFilters.filter(({ value }) => value !== filter.value))
+    } else {
+      setActiveFilters([...activeFilters, filter])
+    }
+  }
+
+  const categoryTags = useMemo(() => {
+    const tagsForMarkets = markets.reduce<
+      Record<string, { value: string; label: string; count: number; tag: boolean }>
+    >((acc, markets) => {
+      markets.groups?.forEach((tag) => {
+        if (acc[tag]) {
+          acc[tag].count += 1
+        } else {
+          acc[tag] = { value: tag, label: tag, count: 1, tag: true }
+        }
+      })
+      return acc
+    }, {})
+
+    return _(tagsForMarkets).values().orderBy('count', 'desc').value()
   }, [markets])
+
+  const filters = useMemo(
+    () => [
+      {
+        id: 'status',
+        name: 'Status',
+        options: [
+          { value: 'unresolved', label: 'Unresolved' },
+          { value: 'creator-afk', label: 'Creator AFK' },
+          { value: 'creator-deleted', label: 'Creator Deleted' },
+        ],
+      },
+      {
+        id: 'type',
+        name: 'Type',
+        options: [
+          { value: 'BINARY', label: 'Binary' },
+          { value: 'MULTIPLE_CHOICE', label: 'Multiple Choice' },
+          { value: 'FREE_RESPONSE', label: 'Free Response' },
+          { value: 'POLL', label: 'Poll' },
+          { value: 'PSEUDO_NUMERIC', label: 'Pseudo Numeric' },
+          { value: 'STONK', label: 'Stonk' },
+        ],
+      },
+      {
+        id: 'tag',
+        name: 'Tag',
+        options: categoryTags,
+      },
+    ],
+    [categoryTags],
+  )
+
+  const filteredMarkets = useMemo(() => {
+    const tagFilters = activeFilters.filter((filter) => 'tag' in filter)
+    const otherFilters = activeFilters.filter((filter) => !('tag' in filter))
+
+    return markets.filter((market) => {
+      const passesOtherFilters = otherFilters.every((filter) => {
+        switch (filter.value) {
+          case 'closes-soon':
+            return true
+          case 'unresolved':
+            return !isResolvedMarket(market)
+          case 'creator-afk':
+            return moment(market.creator_last_bet_time).isBefore(moment().subtract(1, 'month'))
+          case 'creator-deleted':
+            return market.creator_deleted
+          case 'BINARY':
+            return market.market_type === 'BINARY'
+          case 'MULTIPLE_CHOICE':
+            return market.market_type === 'MULTIPLE_CHOICE'
+          case 'FREE_RESPONSE':
+            return market.market_type === 'FREE_RESPONSE'
+          case 'POLL':
+            return market.market_type === 'POLL'
+          case 'PSEUDO_NUMERIC':
+            return market.market_type === 'PSEUDO_NUMERIC'
+          case 'STONK':
+            return market.market_type === 'STONK'
+          default:
+            return true
+        }
+      })
+
+      if (tagFilters.length === 0) {
+        return passesOtherFilters
+      }
+
+      const passesTagFilters = tagFilters.some((filter) => {
+        return market.groups?.includes(filter.value)
+      })
+
+      return passesOtherFilters && passesTagFilters
+    })
+  }, [markets, activeFilters])
 
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -148,34 +248,6 @@ export function MarketsTable() {
     debugTable: true,
   })
 
-  const filters = [
-    {
-      id: 'state',
-      name: 'State',
-      options: [
-        { value: 'unresolved', label: 'Unresolved', checked: true },
-        { value: 'creator-afk', label: 'Creator AFK', checked: false },
-        { value: 'creator-deleted', label: 'Creator Deleted', checked: false },
-      ],
-    },
-    {
-      id: 'market-type',
-      name: 'Market Type',
-      options: [
-        { value: 'BINARY', label: 'Binary', checked: false },
-        { value: 'MULTIPLE_CHOICE', label: 'Multiple Choice', checked: false },
-        { value: 'FREE_RESPONSE', label: 'Free Response', checked: false },
-        { value: 'POLL', label: 'Poll', checked: false },
-        { value: 'PSEUDO_NUMERIC', label: 'Pseudo Numeric', checked: false },
-        { value: 'STONK', label: 'Stonk', checked: false },
-      ],
-    },
-  ]
-  const activeFilters = [
-    { value: 'closes-soon', label: 'Closes in 2023' },
-    { value: 'unresolved', label: 'Unresolved' },
-  ]
-
   return (
     <div>
       <section aria-labelledby="filter-heading">
@@ -183,18 +255,13 @@ export function MarketsTable() {
           <div className="mx-auto flex items-center justify-between px-3">
             <h3 className="text-lg font-semibold">Markets</h3>
 
-            {/* <div className="hidden sm:block">
+            <div className="hidden sm:block">
               <div className="flow-root">
                 <Popover.Group className="-mx-4 flex items-center divide-x divide-gray-200">
                   {filters.map((section, sectionIdx) => (
                     <Popover key={section.name} className="relative inline-block px-4 text-left">
                       <Popover.Button className="group inline-flex justify-center text-sm font-medium text-gray-700 hover:text-gray-900">
                         <span>{section.name}</span>
-                        {sectionIdx === 0 ? (
-                          <span className="ml-1.5 rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-gray-700">
-                            1
-                          </span>
-                        ) : null}
                         <ChevronDownIcon
                           className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                           aria-hidden="true"
@@ -210,24 +277,33 @@ export function MarketsTable() {
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                       >
-                        <Popover.Panel className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Popover.Panel className="absolute right-0 z-10 mt-2 max-h-[400px] origin-top-right overflow-y-auto bg-white p-4 shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
                           <form className="space-y-4">
                             {section.options.map((option, optionIdx) => (
-                              <div key={option.value} className="flex items-center">
+                              <div key={option.value} className="flex max-w-[200px] items-center">
                                 <input
                                   id={`filter-${section.id}-${optionIdx}`}
                                   name={`${section.id}[]`}
                                   defaultValue={option.value}
                                   type="checkbox"
-                                  defaultChecked={option.checked}
+                                  defaultChecked={
+                                    activeFilters.find(({ value }) => value === option.value) ? true : false
+                                  }
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                  onChange={() => handleToggleActiveFilters(option)}
                                 />
                                 <label
                                   htmlFor={`filter-${section.id}-${optionIdx}`}
-                                  className="ml-3 whitespace-nowrap pr-6 text-sm font-medium text-gray-900"
+                                  className="ml-3 flex-1 truncate whitespace-nowrap pr-3 text-sm font-medium text-gray-900"
                                 >
                                   {option.label}
                                 </label>
+
+                                {'count' in option && (
+                                  <span className="ml-1.5 rounded bg-gray-200 px-1.5 py-0.5 text-xs font-semibold tabular-nums text-gray-700">
+                                    {option.count}
+                                  </span>
+                                )}
                               </div>
                             ))}
                           </form>
@@ -237,7 +313,7 @@ export function MarketsTable() {
                   ))}
                 </Popover.Group>
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
 
@@ -249,16 +325,23 @@ export function MarketsTable() {
                   key={activeFilter.value}
                   className="m-1 inline-flex items-center rounded-full border border-gray-200 bg-white py-1.5 pl-3 pr-2 text-sm font-medium text-gray-900"
                 >
+                  {'tag' in activeFilter && <span className="mr-1">Tag:</span>}
                   <span>{activeFilter.label}</span>
-                  {/* <button
-                    type="button"
-                    className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
-                  >
-                    <span className="sr-only">Remove filter for {activeFilter.label}</span>
-                    <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                      <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
-                    </svg>
-                  </button> */}
+
+                  {activeFilter.value !== 'closes-soon' ? (
+                    <button
+                      type="button"
+                      className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
+                      onClick={() => handleToggleActiveFilters(activeFilter)}
+                    >
+                      <span className="sr-only">Remove filter for {activeFilter.label}</span>
+                      <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                        <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
+                      </svg>
+                    </button>
+                  ) : (
+                    <div className="w-1" />
+                  )}
                 </span>
               ))}
             </div>

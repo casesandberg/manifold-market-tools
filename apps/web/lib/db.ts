@@ -12,6 +12,7 @@ export type Market = {
   total_liquidity: number
   unique_bettor_count: number
   volume: number
+  groups?: Array<string>
 
   creator_name: string
   creator_username: string
