@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import _ from 'lodash'
 import clsx from 'clsx'
+import { useMemo } from 'react'
 
 function timeSince(date: Date) {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
@@ -34,7 +35,10 @@ function timeSince(date: Date) {
 export function RecentlyResolvedList() {
   const markets = useLiveQuery(() => db.markets.toArray()) ?? []
 
-  const recentlyResolvedMarkets = _(markets).filter('resolved_at').orderBy('resolved_at').reverse().take(7).value()
+  const recentlyResolvedMarkets = useMemo(
+    () => _(markets).filter('resolved_at').orderBy('resolved_at').reverse().take(7).value(),
+    [markets],
+  )
 
   return (
     <ul role="list" className="space-y-6">

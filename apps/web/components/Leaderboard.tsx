@@ -3,6 +3,7 @@
 import { Market, db } from '@/lib/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import _ from 'lodash'
+import { useMemo } from 'react'
 
 function countResolvedMarkets(markets: Array<Market>) {
   const resolverCounts: Record<string, { count: 0 } & Market> = {}
@@ -24,8 +25,7 @@ function countResolvedMarkets(markets: Array<Market>) {
 
 export function Leaderboard() {
   const markets = useLiveQuery(() => db.markets.toArray()) ?? []
-
-  const marketsWithCounts = _.take(countResolvedMarkets(markets), 10)
+  const marketsWithCounts = useMemo(() => _.take(countResolvedMarkets(markets), 10), [markets])
 
   return (
     <ul role="list" className="divide-y divide-gray-100">
