@@ -1,5 +1,6 @@
 import { Leaderboard } from '@/components/Leaderboard'
 import { MarketsDotGrid } from '@/components/MarketsDotGrid'
+import { MarketsStats } from '@/components/MarketsStats'
 import { RecentlyResolvedList } from '@/components/RecentlyResolvedList'
 import { ResolvedMarketsGraph } from '@/components/ResolvedMarketsGraph'
 
@@ -16,26 +17,7 @@ export default async function Home() {
     <main>
       <div className="mt-8 flex gap-12 border-b pb-8">
         <div className="flex-[3] lg:order-2">
-          <div className="flex gap-16">
-            <div className="overflow-hidden">
-              <dt className="truncate text-sm font-medium text-gray-500">Markets Closing</dt>
-              <dd className="mt-1 font-serif text-3xl font-semibold tracking-tight text-gray-900">
-                {stats.total_markets}
-              </dd>
-            </div>
-            <div className="overflow-hidden">
-              <dt className="truncate text-sm font-medium text-gray-500">Resolved</dt>
-              <dd className="mt-1 font-serif text-3xl font-semibold tracking-tight text-gray-900">
-                {stats.resolved_markets}
-              </dd>
-            </div>
-            <div className="overflow-hidden">
-              <dt className="truncate text-sm font-medium text-gray-500">Percent</dt>
-              <dd className="mt-1 font-serif text-3xl font-semibold tracking-tight text-gray-900">
-                {Math.round((stats.resolved_markets / stats.total_markets) * 100)}%
-              </dd>
-            </div>
-          </div>
+          <MarketsStats initialTotal={stats.total_markets} initialResolved={stats.resolved_markets} />
         </div>
         <div className="flex-1 lg:order-1">
           <div className="overflow-hidden">
