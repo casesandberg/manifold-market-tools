@@ -31,8 +31,8 @@ export function MarketsStats({ initialTotal, initialResolved }: { initialTotal: 
   }, [markets])
 
   return (
-    <div className="flex gap-16">
-      <div className="overflow-hidden">
+    <div className="flex gap-8 sm:gap-16">
+      <div className="hidden overflow-hidden sm:block">
         <dt className="truncate text-sm font-medium text-gray-500">Markets Closing</dt>
         <dd className="mt-1 font-serif text-3xl font-semibold tracking-tight text-gray-900">
           <Counter value={closingMarkets} height={40} />

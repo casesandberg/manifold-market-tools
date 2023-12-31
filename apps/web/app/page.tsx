@@ -15,7 +15,7 @@ export default async function Home() {
 
   return (
     <main>
-      <div className="mt-8 flex gap-12 border-b pb-8">
+      <div className="mt-8 flex flex-col gap-12 border-b pb-8 sm:flex-row">
         <div className="flex-1">
           <div className="overflow-hidden">
             <dt className="truncate text-sm font-medium text-gray-500">Manifold{"'"}s New Years</dt>
