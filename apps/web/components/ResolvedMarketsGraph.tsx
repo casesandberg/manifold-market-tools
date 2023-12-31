@@ -31,6 +31,17 @@ export type AreaProps = {
   margin?: { top: number; right: number; bottom: number; left: number }
 }
 
+function getFurthestFutureDate(givenDate: string) {
+  const now = moment()
+  const otherDate = moment(givenDate)
+
+  if (otherDate.isAfter(now)) {
+    return otherDate
+  } else {
+    return now
+  }
+}
+
 const getHour = (d: DataInterval) => new Date(d.hour)
 const bisectDate = bisector<DataInterval, Date>(getHour).left
 
@@ -97,9 +108,9 @@ const MarketCumSumChart = ({ width, height, margin = { top: 0, right: 0, bottom:
     () =>
       scaleTime({
         range: [margin.left, innerWidth + margin.left],
-        domain: [new Date('Dec 29, 2023'), marketsByDate[marketsByDate.length - 1]?.hour],
+        domain: [new Date('Dec 29, 2023'), getFurthestFutureDate('Jan 2, 2024').toDate()],
       }),
-    [innerWidth, margin.left, marketsByDate],
+    [innerWidth, margin.left],
   )
 
   const stockValueScale = useMemo(
