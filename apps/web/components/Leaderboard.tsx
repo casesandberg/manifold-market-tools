@@ -32,7 +32,11 @@ export function Leaderboard() {
       {marketsWithCounts.map((market) => (
         <li key={market.resolver_user_id} className="flex justify-between gap-x-6 py-2">
           <div className="flex min-w-0 gap-x-4">
-            <img className="h-10 w-10 flex-none rounded-full bg-gray-50" src={market.resolver_avatar_url} alt="" />
+            <img
+              className="h-10 w-10 flex-none rounded-full bg-gray-50"
+              src={market.resolver_avatar_url ?? ''}
+              alt=""
+            />
             <div className="min-w-0 flex-auto">
               <p className="text-sm font-semibold leading-6 text-gray-900">{market.resolver_username}</p>
               <p className="truncate text-xs leading-5 text-gray-500">Resolved {market.count} markets</p>

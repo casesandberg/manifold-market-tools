@@ -25,7 +25,7 @@ export function MarketsStats({ initialTotal, initialResolved }: { initialTotal: 
       }
     })
 
-    const percentResolved = closedMarkets ? Math.round((resolvedMarkets / closedMarkets) * 100) : ''
+    const percentResolved = closedMarkets ? Math.round((resolvedMarkets / closedMarkets) * 100) : 0
 
     return { closingMarkets, closedMarkets, resolvedMarkets, percentResolved }
   }, [markets])
