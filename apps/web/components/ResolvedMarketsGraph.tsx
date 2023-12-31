@@ -128,14 +128,18 @@ const MarketCumSumChart = ({ width, height, margin = { top: 0, right: 0, bottom:
       showTooltip({
         tooltipData: {
           ...d,
-          closedTop: stockValueScale(d.cumulativeClosed),
+          closedTop: stockValueScale(d?.cumulativeClosed ?? 0),
         },
         tooltipLeft: x,
-        tooltipTop: stockValueScale(d.cumulativeResolved),
+        tooltipTop: stockValueScale(d?.cumulativeResolved ?? 0),
       })
     },
     [showTooltip, stockValueScale, dateScale, marketsByDate],
   )
+
+  if (!markets.length) {
+    return null
+  }
 
   return (
     <div className="relative">

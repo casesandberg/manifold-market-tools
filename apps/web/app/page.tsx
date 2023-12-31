@@ -41,8 +41,6 @@ export default async function Home() {
           <Leaderboard />
         </div>
       </div>
-      {/* Home
-       */}
     </main>
   )
 }

@@ -48,7 +48,7 @@ export function MarketsStats({ initialTotal, initialResolved }: { initialTotal: 
       {percentResolved ? (
         <div className="overflow-hidden">
           <dt className="truncate text-sm font-medium text-gray-500">Percent</dt>
-          <dd className="mt-1 font-serif text-3xl font-semibold tracking-tight text-gray-900">
+          <dd className="mt-1 flex font-serif text-3xl font-semibold tracking-tight text-gray-900">
             <Counter value={percentResolved} height={40} />%
           </dd>
         </div>
