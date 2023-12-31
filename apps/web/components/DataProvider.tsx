@@ -25,8 +25,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         console.log('Unable to join', resp)
       })
 
-    channel.on('market_updated', (market: Market) => {
-      db.markets.put(market)
+    channel.on('market_updated', (message: { market: Market }) => {
+      db.markets.put(message.market)
     })
 
     return () => {
