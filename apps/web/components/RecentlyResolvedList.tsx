@@ -4,7 +4,21 @@ import { db } from '@/lib/db'
 import { useLiveQuery } from 'dexie-react-hooks'
 import _ from 'lodash'
 import clsx from 'clsx'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+
+function RelativeTime({ value }: { value: string }) {
+  const [_, setCurrentTime] = useState(new Date())
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 30000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return timeSince(new Date(value))
+}
 
 function timeSince(date: Date) {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
@@ -71,7 +85,7 @@ export function RecentlyResolvedList() {
             as <span className="font-medium text-gray-900">{market.resolution}</span>
           </p>
           <time dateTime={market.resolved_at ?? undefined} className="flex-none py-0.5 text-xs leading-5 text-gray-400">
-            {timeSince(new Date(market.resolved_at ?? ''))}
+            <RelativeTime value={market.resolved_at ?? ''} />
           </time>
         </li>
       ))}
