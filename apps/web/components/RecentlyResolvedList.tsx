@@ -79,7 +79,7 @@ export function RecentlyResolvedList() {
               {market.resolver_username}
             </a>{' '}
             resolved{' '}
-            <a href={market.url ?? ''} className="font-medium text-gray-900 hover:underline">
+            <a href={market.url ?? ''} target="_blank" className="font-medium text-gray-900 hover:underline">
               {market.market_title}
             </a>{' '}
             as <span className="font-medium text-gray-900">{market.resolution}</span>
