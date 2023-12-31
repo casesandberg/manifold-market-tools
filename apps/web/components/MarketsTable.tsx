@@ -31,6 +31,8 @@ export function MarketsTable() {
     } else {
       setActiveFilters([...activeFilters, filter])
     }
+
+    table.resetPagination()
   }
 
   const categoryTags = useMemo(() => {
@@ -241,6 +243,7 @@ export function MarketsTable() {
         pageSize: 50,
       },
     },
+    autoResetPageIndex: false,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
