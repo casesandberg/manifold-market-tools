@@ -16,8 +16,8 @@ export function MarketsDotGrid() {
         const color = isResolvedMarket(market)
           ? 'bg-emerald-400'
           : moment(market.close_time).isBefore()
-            ? 'bg-gray-400'
-            : 'bg-gray-200'
+            ? 'bg-gray-300'
+            : 'bg-gray-100'
         return (
           <motion.a
             href={market.url ?? ''}

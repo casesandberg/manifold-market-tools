@@ -28,7 +28,7 @@ export default async function Home() {
 
         <div className="flex-1"></div>
       </div>
-      <div className="mt-8 flex gap-12">
+      <div className="mb-8 mt-8 flex gap-12">
         <div className="hidden flex-1 md:block">
           <RecentlyResolvedList />
         </div>
