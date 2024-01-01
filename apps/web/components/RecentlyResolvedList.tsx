@@ -50,45 +50,65 @@ export function RecentlyResolvedList() {
   const markets = useLiveQuery(() => db.markets.toArray()) ?? []
 
   const recentlyResolvedMarkets = useMemo(
-    () => _(markets).filter('resolved_at').orderBy('resolved_at').reverse().take(7).value(),
+    () => _(markets).filter('resolved_at').orderBy('resolved_at').reverse().take(10).value(),
     [markets],
   )
 
   return (
-    <ul role="list" className="space-y-6">
-      {recentlyResolvedMarkets.map((market, i) => (
-        <li key={market.market_id} className="relative flex gap-x-3">
-          <div
+    <>
+      <div className="mb-4 border-b border-gray-200">
+        <nav className="-mb-px flex space-x-4" aria-label="Tabs">
+          <button
             className={clsx(
-              i === recentlyResolvedMarkets.length - 1 ? 'h-6' : '-bottom-6',
-              'absolute left-0 top-0 flex w-2 justify-center',
+              true
+                ? 'border-emerald-400 text-emerald-500'
+                : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+              'whitespace-nowrap border-b-2 px-1 py-2 text-sm font-medium',
             )}
           >
-            <div className="w-px bg-gray-300" />
-          </div>
+            Resolved Markets
+          </button>
+        </nav>
+      </div>
 
-          <div className="relative flex h-6 w-2 flex-none items-center justify-center bg-[#F1F1F2]">
-            <div className="h-1.5 w-1.5 bg-emerald-400 ring-1 ring-emerald-400" />
-          </div>
-          <p className="flex-auto py-0.5 text-xs leading-5 text-gray-500">
-            <a
-              href={market.resolver_profile_url ?? ''}
-              target="_blank"
-              className="font-medium text-gray-900 hover:underline"
+      <ul role="list" className="space-y-6">
+        {recentlyResolvedMarkets.map((market, i) => (
+          <li key={market.market_id} className="relative flex gap-x-3">
+            <div
+              className={clsx(
+                i === recentlyResolvedMarkets.length - 1 ? 'h-6' : '-bottom-6',
+                'absolute left-0 top-0 flex w-2 justify-center',
+              )}
             >
-              {market.resolver_username}
-            </a>{' '}
-            resolved{' '}
-            <a href={market.url ?? ''} target="_blank" className="font-medium text-gray-900 hover:underline">
-              {market.market_title}
-            </a>{' '}
-            as <span className="font-medium text-gray-900">{market.resolution}</span>
-          </p>
-          <time dateTime={market.resolved_at ?? undefined} className="flex-none py-0.5 text-xs leading-5 text-gray-400">
-            <RelativeTime value={market.resolved_at ?? ''} />
-          </time>
-        </li>
-      ))}
-    </ul>
+              <div className="w-px bg-gray-300" />
+            </div>
+
+            <div className="relative flex h-6 w-2 flex-none items-center justify-center bg-[#F1F1F2]">
+              <div className="h-1.5 w-1.5 bg-emerald-400 ring-1 ring-emerald-400" />
+            </div>
+            <p className="flex-auto py-0.5 text-xs leading-5 text-gray-500">
+              <a
+                href={market.resolver_profile_url ?? ''}
+                target="_blank"
+                className="font-medium text-gray-900 hover:underline"
+              >
+                {market.resolver_username}
+              </a>{' '}
+              resolved{' '}
+              <a href={market.url ?? ''} target="_blank" className="font-medium text-gray-900 hover:underline">
+                {market.market_title}
+              </a>{' '}
+              as <span className="font-medium text-gray-900">{market.resolution}</span>
+            </p>
+            <time
+              dateTime={market.resolved_at ?? undefined}
+              className="flex-none py-0.5 text-xs leading-5 text-gray-400"
+            >
+              <RelativeTime value={market.resolved_at ?? ''} />
+            </time>
+          </li>
+        ))}
+      </ul>
+    </>
   )
 }
