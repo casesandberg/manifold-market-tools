@@ -60,9 +60,13 @@ const MarketCumSumChart = ({ width, height, margin = { top: 0, right: 0, bottom:
   const innerHeight = height - margin.top - margin.bottom + 1 // Cut off bottom border
 
   const marketsByDate = useMemo(() => {
+    const filteredMarkets = markets.filter((market) =>
+      moment(market.close_time).isBetween('Dec 28, 2023', 'Jan 2, 2024'),
+    )
+
     const hourlyCounts: Record<number, Pick<DataInterval, 'resolvedCount' | 'closeCount'>> = {}
 
-    markets.forEach((market) => {
+    filteredMarkets.forEach((market) => {
       if (isResolvedMarket(market)) {
         const resolvedHour = moment(market.resolved_at).startOf('hour').valueOf()
         if (!hourlyCounts[resolvedHour]) {

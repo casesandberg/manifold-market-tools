@@ -10,11 +10,14 @@ export function MarketsStats({ initialTotal, initialResolved }: { initialTotal: 
   const markets = useLiveQuery(() => db.markets.toArray()) ?? [] // eslint-disable-line react-hooks/exhaustive-deps
 
   const { closingMarkets, closedMarkets, resolvedMarkets, percentResolved } = useMemo(() => {
-    let closingMarkets = markets.length ? 0 : initialTotal
+    const filteredMarkets = markets.filter((market) =>
+      moment(market.close_time).isBetween('Dec 28, 2023', 'Jan 2, 2024'),
+    )
+    let closingMarkets = filteredMarkets.length ? 0 : initialTotal
     let closedMarkets = 0
-    let resolvedMarkets = markets.length ? 0 : initialResolved
+    let resolvedMarkets = filteredMarkets.length ? 0 : initialResolved
 
-    markets.map((market) => {
+    filteredMarkets.map((market) => {
       if (isResolvedMarket(market)) {
         resolvedMarkets++
         closedMarkets++

@@ -6,13 +6,19 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import moment from 'moment'
 import { motion } from 'framer-motion'
 import { Tooltip } from 'react-tooltip'
+import { useMemo } from 'react'
 
 export function MarketsDotGrid() {
-  const markets = useLiveQuery(() => db.markets.toArray())
+  const markets = useLiveQuery(() => db.markets.toArray()) ?? []
+
+  const filteredMarkets = useMemo(
+    () => markets.filter((market) => moment(market.close_time).isBetween('Dec 28, 2023', 'Jan 2, 2024')),
+    [markets],
+  )
 
   return (
     <div className="flex flex-wrap gap-[1px]" style={{ transform: 'translate3d(0, 0, 0)' }}>
-      {markets?.map((market) => {
+      {filteredMarkets?.map((market) => {
         const color = isResolvedMarket(market)
           ? 'bg-emerald-400'
           : moment(market.close_time).isBefore()

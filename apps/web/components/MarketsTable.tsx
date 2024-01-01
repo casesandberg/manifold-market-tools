@@ -92,7 +92,7 @@ export function MarketsTable() {
       const passesOtherFilters = otherFilters.every((filter) => {
         switch (filter.value) {
           case 'closes-soon':
-            return true
+            return moment(market.close_time).isBetween('Dec 28, 2023', 'Jan 2, 2024')
           case 'unresolved':
             return !isResolvedMarket(market)
           case 'creator-afk':
